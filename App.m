@@ -3,12 +3,12 @@ classdef App < matlab.apps.AppBase
     % Properties that correspond to app components
     properties (Access = public)
         UIFigure       matlab.ui.Figure            % UI Figure
-        Label          matlab.ui.control.Label     % Поиск безусловного мин...
+        Label          matlab.ui.control.Label     % Cubic interpolation me...
         LabelEditField matlab.ui.control.Label     % f(x) = 
         EditField      matlab.ui.control.EditField % x^2*sin(x)
         UIAxes         matlab.ui.control.UIAxes    % Title
-        Button         matlab.ui.control.Button    % Найти минимум
-        Label2         matlab.ui.control.Label     % Ответ:
+        Button         matlab.ui.control.Button    % Find min
+        Label2         matlab.ui.control.Label     % Answer:
         Label3         matlab.ui.control.Label    
     end
 
@@ -49,8 +49,8 @@ classdef App < matlab.apps.AppBase
             app.Label = uilabel(app.UIFigure);
             app.Label.HorizontalAlignment = 'center';
             app.Label.VerticalAlignment = 'center';
-            app.Label.Position = [0 245 640 108];
-            app.Label.Text = 'Поиск безусловного минимума методом кубической интерполяции';
+            app.Label.Position = [246.5 338 147 15];
+            app.Label.Text = 'Cubic interpolation method';
 
             % Create LabelEditField
             app.LabelEditField = uilabel(app.UIFigure);
@@ -77,14 +77,14 @@ classdef App < matlab.apps.AppBase
             app.Button = uibutton(app.UIFigure, 'push');
             app.Button.ButtonPushedFcn = createCallbackFcn(app, @onBtnFindClicked);
             app.Button.Position = [107 102 100 22];
-            app.Button.Text = 'Найти минимум';
+            app.Button.Text = 'Find min';
 
             % Create Label2
             app.Label2 = uilabel(app.UIFigure);
             app.Label2.HorizontalAlignment = 'right';
             app.Label2.VerticalAlignment = 'center';
-            app.Label2.Position = [20 4 286 58];
-            app.Label2.Text = 'Ответ:';
+            app.Label2.Position = [264 26 44 15];
+            app.Label2.Text = 'Answer:';
 
             % Create Label3
             app.Label3 = uilabel(app.UIFigure);
