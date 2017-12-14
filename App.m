@@ -4,19 +4,19 @@ classdef App < matlab.apps.AppBase
     properties (Access = public)
         UIFigure       matlab.ui.Figure            % Cubic interpolation me...
         LabelEditField matlab.ui.control.Label     % F(x) = 
-        EditField      matlab.ui.control.EditField % 2*x^2+16/x
+        Fx             matlab.ui.control.EditField % 2*x^2+16/x
         UIAxes         matlab.ui.control.UIAxes    % Title
-        Button         matlab.ui.control.Button    % Find min
+        BtnFindMin     matlab.ui.control.Button    % Find min
         Label2         matlab.ui.control.Label     % Answer:
         Label3         matlab.ui.control.Label    
         Label4         matlab.ui.control.Label     % X  = 
-        EditField2     matlab.ui.control.EditField % 1
+        X0             matlab.ui.control.EditField % 1
         Label5         matlab.ui.control.Label     %  = 
-        EditField3     matlab.ui.control.EditField % 1
+        Delta          matlab.ui.control.EditField % 1
         Label6         matlab.ui.control.Label     %  = 
-        EditField4     matlab.ui.control.EditField % 0.01
+        Eps1           matlab.ui.control.EditField % 0.01
         Label7         matlab.ui.control.Label     %  = 
-        EditField5     matlab.ui.control.EditField % 0.03
+        Eps2           matlab.ui.control.EditField % 0.03
     end
 
     
@@ -31,13 +31,28 @@ classdef App < matlab.apps.AppBase
             
         end
 
-        % Button button pushed function
+        % BtnFindMin button pushed function
         function onBtnFindClicked(app)
             
-            x = linspace(0, 10, 25);
-            fun = str2func(['@(x)' vectorize(app.EditField.Value)]);
-            z = diff(fun(x));
-            plot(app.UIAxes, z)
+            syms x
+            fun = str2func(['@(x)' vectorize(app.Fx.Value)]);
+            
+            % 2) Find derivative of fun at X
+            dx = diff(fun(x), 'x');
+            x0 = str2double(app.X0.Value);
+            dx0 = subs(dx, x, x0);
+            
+            % 3) Check devirative sign and find dx(x1)
+            delta = str2double(app.Delta.Value);
+            if dx0 < 0
+                x1 = x0 + delta;
+            else
+                x1 = x0 - delta;
+            end
+            dx1 = subs(dx, x, x1);
+            answ3 = dx0*dx1;
+            
+            plot(app.UIAxes, fun(linspace(0,1)))
         end
     end
 
@@ -59,10 +74,10 @@ classdef App < matlab.apps.AppBase
             app.LabelEditField.Position = [32 260 34 15];
             app.LabelEditField.Text = 'F(x) = ';
 
-            % Create EditField
-            app.EditField = uieditfield(app.UIFigure, 'text');
-            app.EditField.Position = [65 258 216 20];
-            app.EditField.Value = '2*x^2+16/x';
+            % Create Fx
+            app.Fx = uieditfield(app.UIFigure, 'text');
+            app.Fx.Position = [65 258 216 20];
+            app.Fx.Value = '2*x^2+16/x';
 
             % Create UIAxes
             app.UIAxes = uiaxes(app.UIFigure);
@@ -74,11 +89,11 @@ classdef App < matlab.apps.AppBase
             app.UIAxes.YGrid = 'on';
             app.UIAxes.Position = [307 60 300 247];
 
-            % Create Button
-            app.Button = uibutton(app.UIFigure, 'push');
-            app.Button.ButtonPushedFcn = createCallbackFcn(app, @onBtnFindClicked);
-            app.Button.Position = [107 60 100 22];
-            app.Button.Text = 'Find min';
+            % Create BtnFindMin
+            app.BtnFindMin = uibutton(app.UIFigure, 'push');
+            app.BtnFindMin.ButtonPushedFcn = createCallbackFcn(app, @onBtnFindClicked);
+            app.BtnFindMin.Position = [107 60 100 22];
+            app.BtnFindMin.Text = 'Find min';
 
             % Create Label2
             app.Label2 = uilabel(app.UIFigure);
@@ -99,10 +114,10 @@ classdef App < matlab.apps.AppBase
             app.Label4.Position = [37 217 29 15];
             app.Label4.Text = 'X  = ';
 
-            % Create EditField2
-            app.EditField2 = uieditfield(app.UIFigure, 'text');
-            app.EditField2.Position = [65 215 216 20];
-            app.EditField2.Value = '1';
+            % Create X0
+            app.X0 = uieditfield(app.UIFigure, 'text');
+            app.X0.Position = [65 215 216 20];
+            app.X0.Value = '1';
 
             % Create Label5
             app.Label5 = uilabel(app.UIFigure);
@@ -110,10 +125,10 @@ classdef App < matlab.apps.AppBase
             app.Label5.Position = [45 179 21 15];
             app.Label5.Text = ' = ';
 
-            % Create EditField3
-            app.EditField3 = uieditfield(app.UIFigure, 'text');
-            app.EditField3.Position = [65 177 216 20];
-            app.EditField3.Value = '1';
+            % Create Delta
+            app.Delta = uieditfield(app.UIFigure, 'text');
+            app.Delta.Position = [65 177 216 20];
+            app.Delta.Value = '1';
 
             % Create Label6
             app.Label6 = uilabel(app.UIFigure);
@@ -121,10 +136,10 @@ classdef App < matlab.apps.AppBase
             app.Label6.Position = [41 142 25 15];
             app.Label6.Text = ' = ';
 
-            % Create EditField4
-            app.EditField4 = uieditfield(app.UIFigure, 'text');
-            app.EditField4.Position = [65 140 216 20];
-            app.EditField4.Value = '0.01';
+            % Create Eps1
+            app.Eps1 = uieditfield(app.UIFigure, 'text');
+            app.Eps1.Position = [65 140 216 20];
+            app.Eps1.Value = '0.01';
 
             % Create Label7
             app.Label7 = uilabel(app.UIFigure);
@@ -132,10 +147,10 @@ classdef App < matlab.apps.AppBase
             app.Label7.Position = [41 103 25 15];
             app.Label7.Text = ' = ';
 
-            % Create EditField5
-            app.EditField5 = uieditfield(app.UIFigure, 'text');
-            app.EditField5.Position = [65 101 216 20];
-            app.EditField5.Value = '0.03';
+            % Create Eps2
+            app.Eps2 = uieditfield(app.UIFigure, 'text');
+            app.Eps2.Position = [65 101 216 20];
+            app.Eps2.Value = '0.03';
         end
     end
 
