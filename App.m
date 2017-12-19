@@ -39,30 +39,48 @@ classdef App < matlab.apps.AppBase
             
             % 2) Find derivative of fun at X
             dx = diff(fun(x), 'x');
-            x0 = str2double(app.X0.Value);
+            x1 = str2double(app.X0.Value);
             
             
             % 3) Check devirative sign and find M
             delta = str2double(app.Delta.Value);
             M = 0;
             while true
-                dx0 = subs(dx, x, x0);
+                dx0 = subs(dx, x, x1);
                 if dx0 < 0
-                    x1 = x0 + 2.^M * delta;
+                    x2 = x1 + 2.^M * delta;
                 else
-                    x1 = x0 - 2.^M * delta;
+                    x2 = x1 - 2.^M * delta;
                 end
                 
-                dx1 = subs(dx, x, x1);
+                dx1 = subs(dx, x, x2);
                 M = M + 1;
-                if dx0*dx1 <= 0
+                if dx0 * dx1 <= 0
                     break
                 else
-                    x0 = x1;
+                    x1 = x2;
                 end
             end
             
-            msgbox(num2str(M))
+            % 4) Find f1 f2 dx0 dx1
+            f1 = subs(fun, x, x1);
+            f2 = subs(fun, x, x2);
+            
+            % 5) Find min of cubic polynom
+            z = 3 * (f1 - f2) / (x2 - x1) + dx0 + dx1;
+            w = (z^2 - dx0 * dx1)^(1/2);
+            if x1 > x2
+                w = -w;
+            end
+            mu = (dx1 + w - z) / (dx1 - dx0 + 2*w);
+            if mu < 0
+                xFinal = x2;
+            elseif (mu >= 0 && mu <= 1)
+                xFinal = x2 - mu * (x2 - x1);
+            else
+                xFinal = x1;
+            end
+            fxFinal = subs(fun, x, xFinal);
             
             plot(app.UIAxes, fun(linspace(0,1)))
         end
