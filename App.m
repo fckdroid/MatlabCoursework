@@ -4,19 +4,19 @@ classdef App < matlab.apps.AppBase
     properties (Access = public)
         UIFigure       matlab.ui.Figure            % Cubic interpolation me...
         LabelEditField matlab.ui.control.Label     % F(x) = 
-        Fx             matlab.ui.control.EditField % 2*x^2+16/x
+        Fx             matlab.ui.control.EditField % 127/4*x^2-61/4*x+2
         UIAxes         matlab.ui.control.UIAxes    % Title
         BtnFindMin     matlab.ui.control.Button    % Find min
         Label2         matlab.ui.control.Label     % Answer:
         Label3         matlab.ui.control.Label    
         Label4         matlab.ui.control.Label     % X  = 
-        X0             matlab.ui.control.EditField % 1
+        X0             matlab.ui.control.EditField % 0.5
         Label5         matlab.ui.control.Label     %  = 
-        Delta          matlab.ui.control.EditField % 1
+        Delta          matlab.ui.control.EditField % 0.25
         Label6         matlab.ui.control.Label     %  = 
-        Eps1           matlab.ui.control.EditField % 0.01
+        Eps1           matlab.ui.control.EditField % 0.02
         Label7         matlab.ui.control.Label     %  = 
-        Eps2           matlab.ui.control.EditField % 0.03
+        Eps2           matlab.ui.control.EditField % 0.05
     end
 
     
@@ -40,17 +40,29 @@ classdef App < matlab.apps.AppBase
             % 2) Find derivative of fun at X
             dx = diff(fun(x), 'x');
             x0 = str2double(app.X0.Value);
-            dx0 = subs(dx, x, x0);
             
-            % 3) Check devirative sign and find dx(x1)
+            
+            % 3) Check devirative sign and find M
             delta = str2double(app.Delta.Value);
-            if dx0 < 0
-                x1 = x0 + delta;
-            else
-                x1 = x0 - delta;
+            M = 0;
+            while true
+                dx0 = subs(dx, x, x0);
+                if dx0 < 0
+                    x1 = x0 + 2.^M * delta;
+                else
+                    x1 = x0 - 2.^M * delta;
+                end
+                
+                dx1 = subs(dx, x, x1);
+                M = M + 1;
+                if dx0*dx1 <= 0
+                    break
+                else
+                    x0 = x1;
+                end
             end
-            dx1 = subs(dx, x, x1);
-            answ3 = dx0*dx1;
+            
+            msgbox(num2str(M))
             
             plot(app.UIAxes, fun(linspace(0,1)))
         end
@@ -77,7 +89,7 @@ classdef App < matlab.apps.AppBase
             % Create Fx
             app.Fx = uieditfield(app.UIFigure, 'text');
             app.Fx.Position = [65 258 216 20];
-            app.Fx.Value = '2*x^2+16/x';
+            app.Fx.Value = '127/4*x^2-61/4*x+2';
 
             % Create UIAxes
             app.UIAxes = uiaxes(app.UIFigure);
@@ -117,7 +129,7 @@ classdef App < matlab.apps.AppBase
             % Create X0
             app.X0 = uieditfield(app.UIFigure, 'text');
             app.X0.Position = [65 215 216 20];
-            app.X0.Value = '1';
+            app.X0.Value = '0.5';
 
             % Create Label5
             app.Label5 = uilabel(app.UIFigure);
@@ -128,7 +140,7 @@ classdef App < matlab.apps.AppBase
             % Create Delta
             app.Delta = uieditfield(app.UIFigure, 'text');
             app.Delta.Position = [65 177 216 20];
-            app.Delta.Value = '1';
+            app.Delta.Value = '0.25';
 
             % Create Label6
             app.Label6 = uilabel(app.UIFigure);
@@ -139,7 +151,7 @@ classdef App < matlab.apps.AppBase
             % Create Eps1
             app.Eps1 = uieditfield(app.UIFigure, 'text');
             app.Eps1.Position = [65 140 216 20];
-            app.Eps1.Value = '0.01';
+            app.Eps1.Value = '0.02';
 
             % Create Label7
             app.Label7 = uilabel(app.UIFigure);
@@ -150,7 +162,7 @@ classdef App < matlab.apps.AppBase
             % Create Eps2
             app.Eps2 = uieditfield(app.UIFigure, 'text');
             app.Eps2.Position = [65 101 216 20];
-            app.Eps2.Value = '0.03';
+            app.Eps2.Value = '0.05';
         end
     end
 
