@@ -26,8 +26,27 @@ classdef App < matlab.apps.AppBase
     
     methods (Access = private)
         
-        function results = func(app)
-            results = false;
+        function results = isEndCondition(app, x1, xFinal, dxFinal)
+            eps1 = str2double(app.Eps1.Value);
+            eps2 = str2double(app.Eps2.Value);
+            cond2 = (xFinal - x1) / xFinal;
+            results = abs(dxFinal) <= eps1 && abs(cond2) <= eps2;
+        end
+        
+        function results = xMin(app, f1, f2, x1, x2, dx0, dx1)
+            z = 3 * (f1 - f2) / (x2 - x1) + dx0 + dx1;
+            w = (z^2 - dx0 * dx1)^(1/2);
+            if x1 > x2
+                w = -w;
+            end
+            mu = (dx1 + w - z) / (dx1 - dx0 + 2*w);
+            if mu < 0
+                results = x2;
+            elseif (mu >= 0 && mu <= 1)
+                results = x2 - mu * (x2 - x1);
+            else
+                results = x1;
+            end
         end
         
     end
@@ -71,46 +90,38 @@ classdef App < matlab.apps.AppBase
                 end
             end
             
-            % 4) Find f1 f2 dx0 dx1
-            f1 = subs(fun, x, x1);
-            f2 = subs(fun, x, x2);
-            
-            % 5) Find min of cubic polynom
-            z = 3 * (f1 - f2) / (x2 - x1) + dx0 + dx1;
-            w = (z^2 - dx0 * dx1)^(1/2);
-            if x1 > x2
-                w = -w;
-            end
-            mu = (dx1 + w - z) / (dx1 - dx0 + 2*w);
-            if mu < 0
-                xFinal = x2;
-            elseif (mu >= 0 && mu <= 1)
-                xFinal = x2 - mu * (x2 - x1);
-            else
-                xFinal = x1;
-            end
-            fxFinal = subs(fun, x, xFinal);
-            
-            % 6) Ñheck condition of decrease
-            if fxFinal < f1
-                % 7) check condition of ending
-                eps1 = str2double(app.Eps1);
-                eps2 = str2double(app.Eps2);
-                dxFinal = subs(dx, x, fxFinal);
-                if abs(dxFinal) > eps1 || abs((xFinal - x1) / xFinal) > eps2
-                    if dxFinal * fxFinal < 0
-                        x2 = x1;
-                        x1 = xFinal;
-                    elseif dxFinal * subs(dx, x, x2) < 0
-                        x1 = xFinal;
+            while true
+                % 4) Find f1 f2 dx0 dx1
+                f1 = subs(fun, x, x1);
+                f2 = subs(fun, x, x2);
+                dx0 = subs(dx, x, x1);
+                dx1 = subs(dx, x, x2);
+                
+                % 5) Find min of cubic polynom
+                xFinal = xMin(app, f1, f2, x1, x2, dx0, dx1);
+                fxFinal = subs(fun, x, xFinal);
+                
+                % 6) Ñheck condition of decrease
+                if fxFinal < f1
+                    % 7) check condition of ending
+                    dxFinal = subs(dx, x, xFinal);
+                    if isEndCondition(app, x1, xFinal, dxFinal)
+                        break;
+                    else
+                        if dxFinal * subs(dx, x, x1) < 0
+                            x2 = x1;
+                            x1 = xFinal;
+                        elseif dxFinal * subs(dx, x, x2) < 0
+                            x1 = xFinal;
+                        end
                     end
-                end
-            else
-                while true
-                    xFinal = xFinal - (xFinal - x1) / 2;
-                    fxFinal = subs(fun, x, xFinal);
-                    if fxFinal <= f1
-                        break
+                else
+                    while true
+                        xFinal = xFinal - (xFinal - x1) / 2;
+                        fxFinal = subs(fun, x, xFinal);
+                        if fxFinal <= f1
+                            break
+                        end
                     end
                 end
             end
