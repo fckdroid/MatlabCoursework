@@ -2,27 +2,36 @@ classdef App < matlab.apps.AppBase
 
     % Properties that correspond to app components
     properties (Access = public)
-        UIFigure       matlab.ui.Figure            % Cubic interpolation me...
-        LabelEditField matlab.ui.control.Label     % F(x) = 
-        Fx             matlab.ui.control.EditField % 127/4*x^2-61/4*x+2
-        UIAxes         matlab.ui.control.UIAxes    % Title
-        BtnFindMin     matlab.ui.control.Button    % Find min
-        Label2         matlab.ui.control.Label     % Answer:
-        Label3         matlab.ui.control.Label    
-        Label4         matlab.ui.control.Label     % X  = 
-        X0             matlab.ui.control.EditField % 0.5
-        Label5         matlab.ui.control.Label     %  = 
-        Delta          matlab.ui.control.EditField % 0.25
-        Label6         matlab.ui.control.Label     %  = 
-        Eps1           matlab.ui.control.EditField % 0.02
-        Label7         matlab.ui.control.Label     %  = 
-        Eps2           matlab.ui.control.EditField % 0.05
+        UIFigure              matlab.ui.Figure                   % Cubic in...
+        LabelEditField        matlab.ui.control.Label            % F(x) = 
+        Fx                    matlab.ui.control.EditField        % 127/4*x^...
+        UIAxes                matlab.ui.control.UIAxes           % Title
+        BtnFindMin            matlab.ui.control.Button           % Find min
+        Label4                matlab.ui.control.Label            % X  = 
+        X0                    matlab.ui.control.EditField        % 0.5
+        Label5                matlab.ui.control.Label            %  = 
+        Delta                 matlab.ui.control.EditField        % 0.25
+        Label6                matlab.ui.control.Label            %  = 
+        Eps1                  matlab.ui.control.EditField        % 0.02
+        Label7                matlab.ui.control.Label            %  = 
+        Eps2                  matlab.ui.control.EditField        % 0.05
+        LabelNumericEditField matlab.ui.control.Label            % Result:
+        Result                matlab.ui.control.NumericEditField % [-Inf Inf]
     end
 
     
     properties (Access = private)
         
     end
+    
+    methods (Access = private)
+        
+        function results = func(app)
+            results = false;
+        end
+        
+    end
+    
 
     methods (Access = private)
 
@@ -82,6 +91,33 @@ classdef App < matlab.apps.AppBase
             end
             fxFinal = subs(fun, x, xFinal);
             
+            % 6) Ñheck condition of decrease
+            if fxFinal < f1
+                % 7) check condition of ending
+                eps1 = str2double(app.Eps1);
+                eps2 = str2double(app.Eps2);
+                dxFinal = subs(dx, x, fxFinal);
+                if abs(dxFinal) > eps1 || abs((xFinal - x1) / xFinal) > eps2
+                    if dxFinal * fxFinal < 0
+                        x2 = x1;
+                        x1 = xFinal;
+                    elseif dxFinal * subs(dx, x, x2) < 0
+                        x1 = xFinal;
+                    end
+                end
+            else
+                while true
+                    xFinal = xFinal - (xFinal - x1) / 2;
+                    fxFinal = subs(fun, x, xFinal);
+                    if fxFinal <= f1
+                        break
+                    end
+                end
+            end
+            
+            app.Result.Value = double(xFinal);
+            app.Result.Enable = 'on';
+            
             plot(app.UIAxes, fun(linspace(0,1)))
         end
     end
@@ -124,19 +160,6 @@ classdef App < matlab.apps.AppBase
             app.BtnFindMin.ButtonPushedFcn = createCallbackFcn(app, @onBtnFindClicked);
             app.BtnFindMin.Position = [107 60 100 22];
             app.BtnFindMin.Text = 'Find min';
-
-            % Create Label2
-            app.Label2 = uilabel(app.UIFigure);
-            app.Label2.HorizontalAlignment = 'right';
-            app.Label2.VerticalAlignment = 'center';
-            app.Label2.Position = [264 25 44 15];
-            app.Label2.Text = 'Answer:';
-
-            % Create Label3
-            app.Label3 = uilabel(app.UIFigure);
-            app.Label3.VerticalAlignment = 'center';
-            app.Label3.Position = [329 25 20 15];
-            app.Label3.Text = '...';
 
             % Create Label4
             app.Label4 = uilabel(app.UIFigure);
@@ -181,6 +204,18 @@ classdef App < matlab.apps.AppBase
             app.Eps2 = uieditfield(app.UIFigure, 'text');
             app.Eps2.Position = [65 101 216 20];
             app.Eps2.Value = '0.05';
+
+            % Create LabelNumericEditField
+            app.LabelNumericEditField = uilabel(app.UIFigure);
+            app.LabelNumericEditField.HorizontalAlignment = 'right';
+            app.LabelNumericEditField.Position = [243 27 38 15];
+            app.LabelNumericEditField.Text = 'Result:';
+
+            % Create Result
+            app.Result = uieditfield(app.UIFigure, 'numeric');
+            app.Result.Enable = 'off';
+            app.Result.Editable = 'off';
+            app.Result.Position = [296 23 100 22];
         end
     end
 
