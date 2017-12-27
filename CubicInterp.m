@@ -1,4 +1,4 @@
-classdef App < matlab.apps.AppBase
+classdef CubicInterp < matlab.apps.AppBase
 
     % Properties that correspond to app components
     properties (Access = public)
@@ -135,7 +135,17 @@ classdef App < matlab.apps.AppBase
             app.MinY.Value = double(yFinal);
             app.MinY.Enable = 'on';
             
-            plot(app.UIAxes, fun(linspace(0,1)))
+            
+            axis(app.UIAxes, [-5*double(xFinal) 7*double(xFinal) -double(yFinal) 7*double(yFinal)])
+            plot(app.UIAxes, xFinal,yFinal,'o')
+            hold(app.UIAxes,'on')
+            
+            plot(app.UIAxes, fun(linspace(-200,200)))
+            
+            x = 0:0.01:5;
+            
+            plot(app.UIAxes, x, fun(x))
+           
         end
     end
 
@@ -251,7 +261,7 @@ classdef App < matlab.apps.AppBase
     methods (Access = public)
 
         % Construct app
-        function app = App()
+        function app = CubicInterp()
 
             % Create and configure components
             createComponents(app)

@@ -1,9 +1,9 @@
-function varargout = Laba1(varargin)
+function varargout = HookeJeeves(varargin)
     gui_Singleton = 1;
     gui_State = struct('gui_Name',       mfilename, ...
                        'gui_Singleton',  gui_Singleton, ...
-                       'gui_OpeningFcn', @Laba1_OpeningFcn, ...
-                       'gui_OutputFcn',  @Laba1_OutputFcn, ...
+                       'gui_OpeningFcn', @HookeJeeves_OpeningFcn, ...
+                       'gui_OutputFcn',  @HookeJeeves_OutputFcn, ...
                        'gui_LayoutFcn',  [] , ...
                        'gui_Callback',   []);
     if nargin && ischar(varargin{1})
@@ -17,11 +17,11 @@ function varargout = Laba1(varargin)
     end
 
 
-function Laba1_OpeningFcn(hObject, ~, handles, varargin)
+function HookeJeeves_OpeningFcn(hObject, ~, handles, varargin)
     handles.output = hObject;
     guidata(hObject, handles);
 
-function varargout = Laba1_OutputFcn(~, ~, handles) 
+function varargout = HookeJeeves_OutputFcn(~, ~, handles) 
     varargout{1} = handles.output;
 
 function FunctEdit_CreateFcn(hObject, ~, ~)
