@@ -20,7 +20,7 @@ classdef CubicInterp < matlab.apps.AppBase
         Label9                matlab.ui.control.Label            % Y =
         MinY                  matlab.ui.control.NumericEditField % [-Inf Inf]
     end
-    
+       
     
     methods (Access = private)
         
@@ -31,20 +31,19 @@ classdef CubicInterp < matlab.apps.AppBase
         
         % BtnFindMin button pushed function
         function onBtnFindClicked(app)
-            
-            fun = str2func(['@(x)' vectorize(app.Fx.Value)]);
-            x1 = str2double(app.X0.Value);
-            delta = str2double(app.Delta.Value);
             eps1 = str2double(app.Eps1.Value);
             eps2 = str2double(app.Eps2.Value);
-            
+            fun = str2func(['@(x)' vectorize(app.Fx.Value)]);
+                      
             
             % 2) Find derivative of fun at X
             syms x
             dx = diff(fun(x), 'x');
+            x1 = str2double(app.X0.Value);
             
             
             % 3) Check devirative sign and find M
+            delta = str2double(app.Delta.Value);
             M = 0;
             while true
                 dx0 = subs(dx, x, x1);
@@ -112,7 +111,6 @@ classdef CubicInterp < matlab.apps.AppBase
                 end
             end
             
-            %Show answer
             app.MinX.Value = double(xFinal);
             app.MinX.Enable = 'on';
             
