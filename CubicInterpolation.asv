@@ -1,4 +1,6 @@
-function xMin = CubicInterolation(fun, x1, delta, eps1, eps2)
+function [xMin, yMin, k3] = CubicInterpolation(fun, x1, delta, eps1, eps2)
+k31 = eps1;
+
 % 2) Find derivative of fun at X
 syms x
 dx = diff(fun(x), 'x');
@@ -73,4 +75,6 @@ while true
 end
 
 xMin = xFinal;
+yMin = subs(fun, x, xFinal);
+k3 = k31;
 end

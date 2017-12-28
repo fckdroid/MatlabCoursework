@@ -33,18 +33,19 @@ classdef CubicInterpolationGUI < matlab.apps.AppBase
             eps1 = str2double(app.Eps1.Value);
             eps2 = str2double(app.Eps2.Value);
             
-            [xMin, yMin, ~] = CubicInterpolation(fun, x1, delta, eps1, eps2);
+            [xMin, yMin, k3] = CubicInterpolation(fun, x1, delta, eps1, eps2);
             
             %Show answer
-            app.MinX.Value = double(xMin);
+            app.MinX.Value = double(xFinal);
             app.MinX.Enable = 'on';
             
             syms x
-            app.MinY.Value = double(yMin);
+            yFinal = subs(fun, x, xFinal);
+            app.MinY.Value = double(yFinal);
             app.MinY.Enable = 'on';
             
-            axis(app.UIAxes, [-5*double(xMin) 7*double(xMin) -double(yMin) 7*double(yMin)])
-            plot(app.UIAxes, xMin,yMin,'o')
+            axis(app.UIAxes, [-5*double(xFinal) 7*double(xFinal) -double(yFinal) 7*double(yFinal)])
+            plot(app.UIAxes, xFinal,yFinal,'o')
             hold(app.UIAxes,'on')
             
             plot(app.UIAxes, fun(linspace(-200,200)))
