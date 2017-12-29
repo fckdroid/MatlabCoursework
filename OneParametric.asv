@@ -86,7 +86,7 @@ plot(x0, y0, 'bs')
 [X, Y] = meshgrid(ax:h:bx);
 [C, hh] = contour(X, Y, binaryFunction(X, Y), [0, 500, 1000, 1500, 2500, 10000, 20000, 50000]);
 clabel(C, hh)
-HookeJeevesWithDichotomy(binaryFunction, x0, y0, ax, bx, h);
+HookeJeeves(binaryFunction, x0, y0, ax, bx, h);
 
 hold off
 
@@ -99,30 +99,11 @@ for i=1:spaceCount
     paramsArray{end+1} = str2double(get(handles.(string), 'String'));
 end
 
-function ClearButton_Callback(~, ~, handles)
-
-cla
-x0 = getNumber(handles.AEdit);
-y0 = getNumber(handles.BEdit);
-ax = getNumber(handles.a);
-bx = getNumber(handles.b);
-h = getNumber(handles.StepEdit);
-binaryFunction = str2func(['@(X1,X2)' get(handles.FunctEdit, 'String')]);
-
-hold on
-plot(x0, y0, 'bs')
-
-[X, Y] = meshgrid(ax:h:bx);
-[C, hh] = contour(X, Y, binaryFunction(X, Y), [0, 500, 1000, 1500, 2500, 10000, 20000, 50000]);
-clabel(C, hh)
-HookeJeevesWithCubicInterpolation(binaryFunction, x0, y0, ax, bx, h);
-
-hold off
-
-finishDraw(handles)
-
 function pushbuttonRandomSearch_Callback(~, ~, handles)
-CubicInterpolationGUI()
+fig = openfig('OneParametric.fig');
+    hand = guihandles(fig);
+    guidata(fig, hand); 
+
 
 function editSpaceCount_CreateFcn(hObject, ~, ~)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))

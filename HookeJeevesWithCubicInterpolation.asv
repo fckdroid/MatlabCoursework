@@ -1,4 +1,4 @@
-function [x1, y1, x2, y2, x3, y3] = huck(fun, x0, y0, ax, bx, exp)
+function [x1, y1, x2, y2, x3, y3] = HookeJeevesWithCubicInterpolation(fun, x0, y0, ax, bx, exp)
 ay=ax;
 by=bx;
 q=0.1;
@@ -107,24 +107,29 @@ while (exp >= q)
     end
     
     e = 0.05;
+    delta = 1;
+    eps1 = e;
+    eps2 = 0.03;
+    
     if ((y2 - y0) > 0)
         if (abs(k) >= 1)
-            y3=Dichotomy(fun,x0,y0,y0,by,k,e);
+            y3=CubicInterpolation(g,x0, delta, eps1, eps2);
+            %y3=CubicInterpolation(fun,x0,y0,y0,by,k,e);
             x3=x0+(y3-y0)/k;
             k31=(y3 - y0)/sqrt((y3 - y0)*(y3 - y0)+(x3 - x0)*(x3 - x0));
         else
-            x3=Dichotomy(fun,x0,y0,x0,bx,k,e);
+            x3=CubicInterpolation(g,x0,y0,x0,bx,k,e);
             y3=k*(x3 - x0)+y0;
             k31=(y3 - y0)/sqrt((y3 - y0)*(y3 - y0)+(x3 - x0)*(x3 - x0));
         end
         
     else
         if (abs(k) >= 1)
-            y3=Dichotomy(fun,x0,y0,ay,y0,k,e);
+            y3=CubicInterpolation(g,x0,y0,ay,y0,k,e);
             x3=x0-(y0-y3)/k;
             k31=(y3 - y0)/sqrt((y3 - y0)*(y3 - y0)+(x3 - x0)*(x3 - x0));
         else
-            x3=Dichotomy(fun,x0,y0,ax,x0,k,e);
+            x3=CubicInterpolation(g,x0,y0,ax,x0,k,e);
             y3=y0-k*(x0-x3);
             k31=(y3 - y0)/sqrt((y3 - y0)*(y3 - y0)+(x3 - x0)*(x3 - x0));
         end
