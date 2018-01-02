@@ -106,34 +106,31 @@ while (exp >= q)
         end
     end
     
-    try
-        e = 0.01;
-        if ((y2 - y0) > 0)
-            if (abs(k) >= 1)
-                y3=Dihotomy(fun,x0,y0,y0,by,k,e);
-                x3=x0+(y3-y0)/k;
-                k31=(y3 - y0)/sqrt((y3 - y0)*(y3 - y0)+(x3 - x0)*(x3 - x0));
-            else
-                x3=Dihotomy(fun,x0,y0,x0,bx,k,e);
-                y3=k*(x3 - x0)+y0;
-                k31=(y3 - y0)/sqrt((y3 - y0)*(y3 - y0)+(x3 - x0)*(x3 - x0));
-            end
-            
+    e = 0.05;
+    if ((y2 - y0) > 0)
+        if (abs(k) >= 1)
+            y3=Dichotomy(fun,x0,y0,y0,by,k,e);
+            x3=x0+(y3-y0)/k;
+            k31=(y3 - y0)/sqrt((y3 - y0)*(y3 - y0)+(x3 - x0)*(x3 - x0));
         else
-            if (abs(k) >= 1)
-                y3=Dihotomy(fun,x0,y0,ay,y0,k,e);
-                x3=x0-(y0-y3)/k;
-                k31=(y3 - y0)/sqrt((y3 - y0)*(y3 - y0)+(x3 - x0)*(x3 - x0));
-            else
-                x3=Dihotomy(fun,x0,y0,ax,x0,k,e);
-                y3=y0-k*(x0-x3);
-                k31=(y3 - y0)/sqrt((y3 - y0)*(y3 - y0)+(x3 - x0)*(x3 - x0));
-            end
+            x3=Dichotomy(fun,x0,y0,x0,bx,k,e);
+            y3=k*(x3 - x0)+y0;
+            k31=(y3 - y0)/sqrt((y3 - y0)*(y3 - y0)+(x3 - x0)*(x3 - x0));
         end
-    catch
-        msgbox('invalid arg')
+        
+    else
+        if (abs(k) >= 1)
+            y3=Dichotomy(fun,x0,y0,ay,y0,k,e);
+            x3=x0-(y0-y3)/k;
+            k31=(y3 - y0)/sqrt((y3 - y0)*(y3 - y0)+(x3 - x0)*(x3 - x0));
+        else
+            x3=Dichotomy(fun,x0,y0,ax,x0,k,e);
+            y3=y0-k*(x0-x3);
+            k31=(y3 - y0)/sqrt((y3 - y0)*(y3 - y0)+(x3 - x0)*(x3 - x0));
+        end
     end
+    
     k3 = k31;
 end
-
+msgbox('xMin:' + )
 end

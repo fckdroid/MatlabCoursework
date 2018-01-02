@@ -113,8 +113,8 @@ while (exp >= q)
     
     if ((y2 - y0) > 0)
         if (abs(k) >= 1)
-            g = @(X1) integral(@(X2) fun(X1,X2) , y0,by);
-            y3=CubicInterpolation(g,x0, delta, eps1, eps2);
+            g = @(X1) integral(@(X2) fun(X1,X2), y0,by);
+            y3=CubicInterpolation(g, x0, delta, eps1, eps2);
             %y3=CubicInterpolation(fun,x0,y0,y0,by,k,e);
             x3=x0+(y3-y0)/k;
             k31=(y3 - y0)/sqrt((y3 - y0)*(y3 - y0)+(x3 - x0)*(x3 - x0));

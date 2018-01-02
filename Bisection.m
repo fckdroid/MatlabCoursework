@@ -1,5 +1,5 @@
 function [x_opt, y_opt] = Bisection(fun, a, b)
-    k_min = 1;
+    k_min = 0.03;
     k = abs(b - a);
 
     while k > k_min

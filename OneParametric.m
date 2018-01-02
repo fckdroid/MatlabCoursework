@@ -66,10 +66,10 @@ x = a:epsilon:b;
 y = unaryFunction(x);
 
 [x_opt, y_opt] = Bisection(unaryFunction, a, b);
-
 plot(x, y, x_opt, y_opt, 'bs')
 
 finishDraw(handles)
+msgbox(strcat('x =  ',  num2str(x_opt), ';', ' y = ', num2str(y_opt)))
 
 function GaussMethod_Callback(~, ~, handles)
 cla
@@ -86,8 +86,9 @@ plot(x0, y0, 'bs')
 [X, Y] = meshgrid(ax:h:bx);
 [C, hh] = contour(X, Y, binaryFunction(X, Y), [0, 500, 1000, 1500, 2500, 10000, 20000, 50000]);
 clabel(C, hh)
-HookeJeevesWithDichotomy(binaryFunction, x0, y0, ax, bx, h);
-
+[x1, y1, x2, y2, x3, y3] = HookeJeevesWithDichotomy(binaryFunction, x0, y0, ax, bx, h);
+textLabel = sprintf('xMin = %f\nyMin = %f', x3, y3);
+set(handles.text20, 'String', textLabel);
 hold off
 
 finishDraw(handles)
@@ -96,7 +97,7 @@ function paramsArray = getDataFromControl(handles,type, spaceCount)
 paramsArray = {};
 for i=1:spaceCount
     string = strcat(type, num2str(i));
-    paramsArray{end+1} = str2double(get(handles.(string), 'String'));
+    paramsArray{end+1} = str2double(get(ha5ndles.(string), 'String'));
 end
 
 function ClearButton_Callback(~, ~, handles)
@@ -115,8 +116,10 @@ plot(x0, y0, 'bs')
 [X, Y] = meshgrid(ax:h:bx);
 [C, hh] = contour(X, Y, binaryFunction(X, Y), [0, 500, 1000, 1500, 2500, 10000, 20000, 50000]);
 clabel(C, hh)
-HookeJeevesWithCubicInterpolation(binaryFunction, x0, y0, ax, bx, h);
+[x1, y1, x2, y2, x3, y3] = HookeJeevesWithCubicInterolation(binaryFunction, x0, y0, ax, bx, h);
 
+textLabel = sprintf('xMin = %f\nyMin = %f', x3, y3);
+set(handles.text20, 'String', textLabel);
 hold off
 
 finishDraw(handles)
@@ -252,6 +255,29 @@ function StepEdit_Callback(hObject, eventdata, handles)
 % --- Executes during object creation, after setting all properties.
 function StepEdit_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to StepEdit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function xmin_Callback(hObject, eventdata, handles)
+% hObject    handle to xmin (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of xmin as text
+%        str2double(get(hObject,'String')) returns contents of xmin as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function xmin_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to xmin (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 

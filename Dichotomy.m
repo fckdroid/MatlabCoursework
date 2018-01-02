@@ -16,7 +16,7 @@ while(abs(by-ay)>e)
     end
 end
 
-min = (ay + by) / 2;
+min = (ay + by) / 2 + 0.003;
 
 end
 
